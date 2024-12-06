@@ -1,11 +1,11 @@
 # 青龙面板可用的Serv00账号保活脚本
 ## 食用方法
 ### 设置环境变量  
-SSH_HOST：服务器IP或域名  
-SSH_PORT：SSH端口号（可不设置，默认22）  
-SSH_USER：SSH用户名  
-SSH_PASS：SSH密码  
-SSH_COMMAND：要执行的命令（可不设置，默认ls -la）
+SSH_HOST：服务器IP或域名,有多个时换行设置  
+SSH_PORT：SSH端口号，有多个时换行设置（可不设置，默认全22，如果要设置多个，就要保证和服务器数量一致，且顺序一一对应）  
+SSH_USER：SSH用户名，有多个时换行设置  
+SSH_PASS：SSH密码，有多个时换行设置  
+SSH_COMMAND：要执行的命令，有多个时换行设置（可不设置，默认ls -la，如果要设置多个，就要保证和服务器数量一致，且顺序一一对应）
 
 ### 添加依赖
 青龙面板中添加python依赖：paramiko

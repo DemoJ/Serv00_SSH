@@ -7,7 +7,7 @@ def ssh_connect(host, port, username, password, command):
     自动通过SSH连接服务器并执行命令。
 
     :param host: 服务器IP地址或域名
-    :param port: SSH端口号（默认22）
+    :param port: SSH端口号
     :param username: SSH用户名
     :param password: SSH密码
     :param command: 要执行的命令
@@ -28,34 +28,38 @@ def ssh_connect(host, port, username, password, command):
         error = stderr.read().decode()
 
         if output:
-            print("连接serv00服务器成功，命令输出：")
-            print(output)
-            send("serv00保活","连接serv00服务器成功，命令输出：{}".format(output))
-        if error:
-            print("命令错误：")
-            print(error)
-            send("serv00保活","连接serv00服务器成功，命令错误：{}".format(output))
+            msg = "连接{}服务器成功，命令输出：{}".format(host,output)
 
-        return output if output else error
+        if error:
+            msg = "连接{}服务器成功，命令错误：{}".format(host,error)
+
+        print(msg)
+        return msg
+
     except Exception as e:
-        print(f"发生错误：{e}")
-        send("serv00保活","连接serv00服务器失败：{}".format(e))
+        msg = "连接{}服务器失败：{}".format(host,e)
+        print(msg)
+        return msg
     finally:
         # 确保关闭连接
         client.close()
-        print("连接已关闭")
+        print("{}连接已关闭".format(host))
 
 if __name__ == "__main__":
     # 从环境变量中获取配置
-    server_host = os.getenv("SSH_HOST")  # 服务器IP或域名
-    server_port = int(os.getenv("SSH_PORT", 22))  # 默认SSH端口22
-    username = os.getenv("SSH_USER")  # SSH用户名
-    password = os.getenv("SSH_PASS")  # SSH密码
-    command_to_execute = os.getenv("SSH_COMMAND", "ls -la")  # 默认命令
+    server_hosts = os.getenv("SSH_HOST").split("\n")  # 服务器IP或域名
+    server_ports = os.getenv("SSH_PORT","\n".join(["22"] * len(server_hosts))).split("\n")  # SSH端口号,默认都为22
+    usernames = os.getenv("SSH_USER").split("\n")  # SSH用户名
+    passwords = os.getenv("SSH_PASS").split("\n")  # SSH密码
+    command_to_executes = os.getenv("SSH_COMMAND","\n".join(["ls -la"] * len(server_hosts))).split("\n")  # 需执行的命令，默认都为ls -la
 
-    # 检查必要的环境变量是否已设置
-    if not all([server_host, username, password]):
-        print("请确保已设置以下环境变量：SSH_HOST, SSH_USER, SSH_PASS")
+    # 确保每组信息的数量一致
+    if not (len(server_hosts) == len(server_ports) == len(usernames) == len(passwords) == len(command_to_executes)):
+        print("环境变量配置错误：每组服务器信息的数量不一致")
     else:
-        # 执行SSH连接
-        ssh_connect(server_host, server_port, username, password, command_to_execute)
+        msgs = "Serv00保号\n"
+        # 遍历所有的服务器配置
+        for server_host, server_port, username, password,command_to_execute in zip(server_hosts, server_ports, usernames, passwords,command_to_executes):
+            msg=ssh_connect(server_host, server_port, username, password, command_to_execute)
+            msgs += msg + "\n"
+        send("Serv00保号信息",msgs)
