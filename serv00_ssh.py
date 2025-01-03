@@ -51,7 +51,7 @@ if __name__ == "__main__":
     server_ports = os.getenv("SSH_PORT","\n".join(["22"] * len(server_hosts))).split("\n")  # SSH端口号,默认都为22
     usernames = os.getenv("SSH_USER").split("\n")  # SSH用户名
     passwords = os.getenv("SSH_PASS").split("\n")  # SSH密码
-    command_to_executes = os.getenv("SSH_COMMAND","\n".join(["ls -la"] * len(server_hosts))).split("\n")  # 需执行的命令，默认都为ls -la
+    command_to_executes = os.getenv("SSH_COMMAND","\n".join(["pwd"] * len(server_hosts))).split("\n")  # 需执行的命令，默认使用pwd，节省输出展示
 
     # 确保每组信息的数量一致
     if not (len(server_hosts) == len(server_ports) == len(usernames) == len(passwords) == len(command_to_executes)):
